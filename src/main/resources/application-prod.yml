@@ -1,0 +1,21 @@
+server:
+  port: 8882
+
+# 增加数据库连接
+spring:
+  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.mysql.jdbc.Driver
+    username: wiki
+    password: Wiki123456
+    url: jdbc:mysql://rm-2ze0duv9j8jdn103z.mysql.rds.aliyuncs.com:3306/wiki?useSSL=false&characterEncoding=UTF8&autoReconnect=true&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+#测试
+test:
+  hello: testcustoms12
+
+#mybatis:
+mapper-locations: classpath*:com/wiki/**/mapper/*Mapper.xml
+#mybatis-plus配置控制台打印完整带参数SQL语句
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
