@@ -13,20 +13,7 @@
           </router-link>
         </a-menu-item>
 
-        <a-sub-menu key="sub1">
-          <template #title>
-              <span>
-                <user-outlined />
-                subnav 1
-              </span>
-          </template>
-          <a-menu-item key="1">option1w</a-menu-item>
-          <a-menu-item key="2">option2</a-menu-item>
-          <a-menu-item key="3">option3</a-menu-item>
-          <a-menu-item key="4">option4</a-menu-item>
-        </a-sub-menu>
-
-        <a-sub-menu v-for="item in level1" :key="item.id" :disabled="true">
+        <a-sub-menu v-for="item in level1" :key="item.id">
           <template v-slot:title>
             <span><user-outlined />{{item.name}}</span>
           </template>
@@ -88,11 +75,9 @@ export default defineComponent({
         const data = response.data;
         if (data.success) {
           categorys = data.content;
-          console.log("原始数组：", categorys);
 
           level1.value = [];
           level1.value = Tool.array2Tree(categorys, 0);
-          console.log("树形结构：", level1.value);
         } else {
           message.error(data.message);
         }
