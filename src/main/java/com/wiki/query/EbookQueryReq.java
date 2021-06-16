@@ -7,7 +7,7 @@ public class EbookQueryReq extends PageReq {
 
     private String name;
 
-    private Long categoryId2;
+    private String categoryId2;
 
     public String getId() {
         return id;
@@ -25,11 +25,11 @@ public class EbookQueryReq extends PageReq {
         this.name = name;
     }
 
-    public Long getCategoryId2() {
+    public String getCategoryId2() {
         return categoryId2;
     }
 
-    public void setCategoryId2(Long categoryId2) {
+    public void setCategoryId2(String categoryId2) {
         this.categoryId2 = categoryId2;
     }
 

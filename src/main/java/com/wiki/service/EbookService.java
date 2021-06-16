@@ -32,6 +32,9 @@ public class EbookService {
         if(req.getName() != null){
             queryWrapper.like("name",req.getName());
         }
+        if(req.getCategoryId2() != null){
+            queryWrapper.eq("category2_id",req.getCategoryId2());
+        }
         Page<Ebook> ebookPage = ebookMapper.selectPage(page, queryWrapper);
         return R.ok()
                 .put(WikiConstants.WIKI_CONTENT,ebookPage.getRecords())
