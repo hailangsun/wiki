@@ -8,7 +8,7 @@ import com.wiki.vo.CategoryVo;
 import java.util.List;
 
 
-public interface CategoryService {
+public interface ICategoryService {
     List<CategoryQueryResp> all() throws Exception;
 
     R list(CategoryQueryReq req) throws Exception;

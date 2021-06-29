@@ -8,6 +8,7 @@ import com.wiki.mapper.TestMapper;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
 import java.sql.*;
 
 public class Test1 extends WikiApplicationTests {
@@ -29,5 +30,15 @@ public class Test1 extends WikiApplicationTests {
         System.out.println(ebookPage.getSize());
     }
 
+    public static void main(String[] args) {
+        try {
+            System.out.println(isLessUseWord("外国人")+"-"+isLessUseWord("鴪"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public static Boolean isLessUseWord(String org) throws UnsupportedEncodingException {
+        return !org.equals(new String(org.getBytes("gb18030"),"gb2312"));
+    }
 }

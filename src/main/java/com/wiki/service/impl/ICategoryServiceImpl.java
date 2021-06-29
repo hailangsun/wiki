@@ -1,4 +1,4 @@
-package com.wiki.service.Impl;
+package com.wiki.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -8,7 +8,7 @@ import com.wiki.entity.Category;
 import com.wiki.mapper.CategoryMapper;
 import com.wiki.query.CategoryQueryReq;
 import com.wiki.query.CategoryQueryResp;
-import com.wiki.service.CategoryService;
+import com.wiki.service.ICategoryService;
 import com.wiki.utils.CopyUtil;
 import com.wiki.utils.SnowFlake;
 import com.wiki.vo.CategoryVo;
@@ -21,8 +21,8 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @Service
-public class CategoryServiceImpl implements CategoryService {
-    private static final Logger LOG = LoggerFactory.getLogger(CategoryServiceImpl.class);
+public class ICategoryServiceImpl implements ICategoryService {
+    private static final Logger LOG = LoggerFactory.getLogger(ICategoryServiceImpl.class);
 
     @Resource
     private CategoryMapper categoryMapper;
