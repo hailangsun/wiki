@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -46,10 +47,16 @@ public class DocController {
         return R.ok();
     }
 
-    @DeleteMapping("/delete/{id}")
-    public R delete(@PathVariable String id) {
-        docService.delete(id);
+//    @DeleteMapping("/delete/{id}")
+//    public R delete(@PathVariable String id) {
+//        docService.delete(id);
+//        return R.ok();
+//    }
+
+    @DeleteMapping("/delete/{idsStr}")
+    public R delete(@PathVariable String idsStr) {
+        List<String> list = Arrays.asList(idsStr.split(","));
+        docService.delete(list);
         return R.ok();
     }
-
 }

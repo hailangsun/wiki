@@ -72,4 +72,10 @@ public class DocService {
             docMapper.deleteById(id);
         }
     }
+
+    public void delete(List<String> ids) {
+        if(!ObjectUtils.isEmpty(ids)){
+            docMapper.deleteBatchIds(ids);
+        }
+    }
 }
