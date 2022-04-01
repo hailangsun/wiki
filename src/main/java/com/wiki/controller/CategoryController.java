@@ -19,6 +19,7 @@ public class CategoryController {
     @Resource
     private ICategoryService ICategoryService;
 
+
     @GetMapping("/all")
     public R all() {
         try {

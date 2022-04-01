@@ -23,7 +23,7 @@ public class GeneratorController {
      */
     @RequestMapping("/code")
     public void code(String tables, HttpServletResponse response) throws IOException {
-        tables = "doc";
+//        tables = "doc";
         byte[] data = generatorService.generatorCode(tables.split(","));
 
 

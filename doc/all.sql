@@ -48,7 +48,19 @@ INSERT INTO `wiki`.`doc`(`id`, `ebook_id`, `parent`, `name`, `sort`, `view_count
 INSERT INTO `wiki`.`doc`(`id`, `ebook_id`, `parent`, `name`, `sort`, `view_count`, `vote_count`) VALUES ('5', '1', '3', '文档2.2', 2, 0, 0);
 INSERT INTO `wiki`.`doc`(`id`, `ebook_id`, `parent`, `name`, `sort`, `view_count`, `vote_count`) VALUES ('6', '1', '5', '文档2.2.1', 1, 0, 0);
 
+-- 文档内容，文档内容很多所以需要分出来表，否则加入到一张表时候，分页查询会影响性能 这个叫做 纵向分表
+create table `content`(
+    `id` varchar(200) not null comment 'id',
+    `content` mediumtext not null comment '内容',
+    primary key (`id`)
+)engine=innodb default charset=utf8mb4 comment '文档内容';
 
+DROP TABLE IF EXISTS `content`;
+CREATE TABLE `content`  (
+  `id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `content` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 
 
