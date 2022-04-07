@@ -3,7 +3,7 @@
 <mapper namespace="com.wiki.mapper.TestMapper">
 
     <select id="getTest" resultType="map" parameterType="map">
-        select * from test
+        select * from ebook
     </select>
 
 

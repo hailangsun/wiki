@@ -1,4 +1,4 @@
-package com.wiki.utils;
+package com.wiki.common.utils;
 
 import org.springframework.stereotype.Component;
 

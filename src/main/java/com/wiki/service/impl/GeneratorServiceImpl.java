@@ -5,7 +5,7 @@ package com.wiki.service.impl;
 import com.wiki.generator.ColumnEntity;
 import com.wiki.generator.TableEntity;
 import com.wiki.mapper.GeneratorMapper;
-import com.wiki.utils.DateUtils;
+import com.wiki.common.utils.DateUtils;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;

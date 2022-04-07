@@ -3,8 +3,8 @@ package com.wiki.aspect;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.support.spring.PropertyPreFilters;
 
-import com.wiki.utils.RequestContext;
-import com.wiki.utils.SnowFlake;
+import com.wiki.common.utils.RequestContext;
+import com.wiki.common.utils.SnowFlake;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;

@@ -1,5 +1,6 @@
 package com.wiki.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -36,10 +37,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/vst")
@@ -96,6 +94,7 @@ public class VstController {
     public R fjxxsave(HttpServletRequest request,String filePath) {
         try{
             LOG.info("=====进入保存成功======");
+            Map<String, String[]> parameterMap = request.getParameterMap();
             MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
             List<MultipartFile> fileMap = multipartRequest.getFiles("file");
             if(fileMap != null && fileMap.size() > 0){
@@ -108,7 +107,7 @@ public class VstController {
                 }
 
                 System.out.println(jsonObject.get("filePath").toString());
-                Vst req = new Vst();
+                Vst req = getParms(request, Vst.class);
                 req.setId(snowFlake.nextId()+"");
                 req.setWjlj(jsonObject.get("filePath").toString());
                 req.setSysdate(new Date());
@@ -142,8 +141,12 @@ public class VstController {
 //            response.setContentType("audio/mp4");
             response.setHeader("Last-Modified", new Date().toString());
             response.setHeader("Accept-Ranges", "bytes");
-            response.setContentType("video/mp4");
-            response.addHeader("Content-Type","audio/mp4;charset=UTF-8");
+//            response.setContentType("video/mp4");
+//            response.addHeader("Content-Type","audio/mp4;charset=UTF-8");
+
+            response.setContentType("audio/mpeg");
+            response.addHeader("Content-Type","audio/mpeg;charset=UTF-8");
+
 //            response.setHeader("Content-disposition","attachment;filename=\""+vst.getWjlj()+"\"");
             IOUtils.copy(inputStream,response.getOutputStream());
             response.flushBuffer();
@@ -179,5 +182,19 @@ public class VstController {
 //            VSTLogger.localLog("===========下载附件出错===============参数:"+paramMap);
 //            e.printStackTrace();
 //        }
+    }
+
+    public static <T> T getParms(HttpServletRequest request, Class<T> parmClass) {
+        Map<String,String> parmMap=new HashMap<String,String>();
+        Enumeration<String> all = request.getParameterNames();
+        String name  = "";
+        String value = "";
+        while(all.hasMoreElements()){
+            name = all.nextElement();
+            value = request.getParameter(name);
+            parmMap.put(name, value);
+        }
+        T result = JSON.parseObject(JSON.toJSONString(parmMap), parmClass);
+        return result;
     }
 }

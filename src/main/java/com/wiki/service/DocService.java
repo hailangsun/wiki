@@ -4,12 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wiki.common.R;
 import com.wiki.common.WikiConstants;
+import com.wiki.common.utils.CopyUtil;
+import com.wiki.common.utils.SnowFlake;
 import com.wiki.entity.Doc;
 import com.wiki.mapper.DocMapper;
 import com.wiki.query.DocQueryReq;
 import com.wiki.query.DocQueryResp;
-import com.wiki.utils.CopyUtil;
-import com.wiki.utils.SnowFlake;
+
 import com.wiki.vo.DocVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -26,8 +26,6 @@ public class GeneratorController {
 //        tables = "doc";
         byte[] data = generatorService.generatorCode(tables.split(","));
 
-
-
         response.reset();
         response.setHeader("Content-Disposition", "attachment; filename=\"renren.zip\"");
         response.addHeader("Content-Length", "" + data.length);
