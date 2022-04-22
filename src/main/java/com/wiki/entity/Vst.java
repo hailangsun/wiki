@@ -10,5 +10,9 @@ public class Vst {
     private String phone;
     private String wenti;
     private String wjlj;
+    //1图片
+    private String flagtype;
+    private String battchid;
+    private String filename;
     private Date sysdate;
 }

@@ -1,6 +1,7 @@
 package com.wiki.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -24,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -97,6 +99,7 @@ public class VstController {
             Map<String, String[]> parameterMap = request.getParameterMap();
             MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
             List<MultipartFile> fileMap = multipartRequest.getFiles("file");
+            LOG.info("=====参数======"+parameterMap);
             if(fileMap != null && fileMap.size() > 0){
 
                 VSFSClient client = getClient();
@@ -120,6 +123,79 @@ public class VstController {
         return R.ok();
     }
 
+
+    /**
+     * 存储多个文件
+     * @param request
+     * @param filePath
+     * @return
+     */
+    @RequestMapping(value = "/fjxxsaveMultipart", method = RequestMethod.POST)
+    @ResponseBody
+    public R fjxxsaveMultipart(HttpServletRequest request,String filePath) {
+        try{
+            LOG.info("=====fjxxsaveMultipart======");
+            Map<String, String[]> parameterMap = request.getParameterMap();
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+            List<MultipartFile> fileMap = multipartRequest.getFiles("file");
+            Vst req = getParms(request, Vst.class);
+            req.setBattchid(snowFlake.nextId()+"");
+            if(fileMap != null && fileMap.size() > 0){
+
+                VSFSClient client = getClient();
+                String retJson = client.uploadSingleStreamFile(FJXX_PATH, new StreamFile(fileMap.get(0).getOriginalFilename(), fileMap.get(0).getInputStream()));
+                JSONObject jsonObject = JSONObject.parseObject(retJson);
+                if (!jsonObject.get("result").toString().equals("success")) {
+                    throw new RuntimeException("附件上传服务器失败！");
+                }
+                req.setId(snowFlake.nextId()+"");
+                req.setWjlj(jsonObject.get("filePath").toString());
+                req.setFilename(jsonObject.get("fileName").toString());
+                req.setSysdate(new Date());
+                vstMapper.insert(req);
+                return R.ok().put("data",req);
+            }
+
+
+//            Map<String, MultipartFile> imagefiles = multipartRequest.getFileMap();
+//            LOG.info("=====参数======"+parameterMap);
+//            VSFSClient client = getClient();
+//            List<StreamFile> streamFiles = new ArrayList<>();
+//            Map<String,String> fileNames = new HashMap<>();
+//            for (Map.Entry<String, MultipartFile> entry : imagefiles.entrySet()) {
+////                String[] suffixName = null;
+////                if(StringUtils.hasLength(entry.getKey())){
+////                    suffixName = entry.getKey().split("\\.");
+////                }
+////                String filenameid = snowFlake.nextId()+"."+suffixName[1];
+////                streamFiles.add(new StreamFile(filenameid, entry.getValue().getInputStream()));
+////                fileNames.put(filenameid,entry.getKey());
+//                streamFiles.add(new StreamFile(entry.getKey(), entry.getValue().getInputStream()));
+//            }
+
+//            String retJson = client.uploadMultipleStreamFile(FJXX_PATH, streamFiles);
+//            List<Map> maps = JSONObject.parseArray(retJson, Map.class);
+//            Vst req = getParms(request, Vst.class);
+//            req.setBattchid(snowFlake.nextId()+"");
+//            maps.stream().forEach(item ->{
+//                if (!item.get("result").toString().equals("success")) {
+//                    throw new RuntimeException("附件上传服务器失败！");
+//                }
+//                req.setId(snowFlake.nextId()+"");
+//                req.setWjlj(item.get("filePath").toString());
+////                req.setFilename(fileNames.get(item.get("fileName").toString()));
+//                req.setFilename(item.get("fileName").toString());
+//                req.setSysdate(new Date());
+//                vstMapper.insert(req);
+//            });
+//
+//            return R.ok().put("data",req);
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return R.ok();
+    }
 
     /**
      * 下载附件
@@ -148,6 +224,73 @@ public class VstController {
             response.addHeader("Content-Type","audio/mpeg;charset=UTF-8");
 
 //            response.setHeader("Content-disposition","attachment;filename=\""+vst.getWjlj()+"\"");
+            IOUtils.copy(inputStream,response.getOutputStream());
+            response.flushBuffer();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+//        try {
+//
+//                InputStream inputStream = fjxxService.getStreamByPath(fkfjxxByYwid.get(0));
+//                if (inputStream != null) {
+//                    String hzmc = fkfjxxByYwid.get(0).get("HZMC") == null ? ".docx" : "."+fkfjxxByYwid.get(0).get("HZMC");
+//                    OutputStream outputStream = response.getOutputStream();
+//                    wjmc = URLEncoder.encode(wjmc, "UTF-8");
+//                    response.setContentType("application/octet-stream");
+//                    response.setHeader("Content-disposition","attachment;filename=\""+wjmc+hzmc+"\"");
+//                    try {
+//                        int bytesRead = 0;
+//                        byte[] buffer = new byte[1024];
+//                        while ((bytesRead = inputStream.read(buffer, 0, 1024)) != -1) {
+//                            outputStream.write(buffer, 0, bytesRead);
+//                        }
+//                    }catch (Exception e){
+//                        throw new RuntimeException(e.getMessage());
+//                    }finally {
+//                        outputStream.close();
+//                        inputStream.close();
+//                    }
+//                }
+//
+//        } catch (Exception e) {
+//            VSTLogger.localLog("===========下载附件出错===============参数:"+paramMap);
+//            e.printStackTrace();
+//        }
+    }
+
+    @RequestMapping(value = "/fjxxDownloadImage", method = RequestMethod.GET)
+    public void fjxxDownloadImage(HttpServletRequest request, HttpServletResponse response) {
+        LOG.info("=====fjxxDownloadImage======");
+        VSFSClient client = getClient();
+        QueryWrapper<Vst> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("sysdate");
+        queryWrapper.isNotNull("sysdate");
+        queryWrapper.eq("flagtype",'1');
+        List<Vst> vsts = vstMapper.selectList(queryWrapper);
+        try {
+
+            String[] suffixName = null;
+            if(StringUtils.hasLength(vsts.get(0).getFilename())){
+                suffixName = vsts.get(0).getFilename().split("\\.");
+            }
+            String suffixTemp = suffixName[1];
+            if("png".equals(suffixName[1])){
+                response.setContentType("image/png");
+                response.addHeader("Content-Type","image/png;charset=UTF-8");
+            }else {
+                response.setContentType("image/jpeg");
+                response.addHeader("Content-Type","image/jpeg;charset=UTF-8");
+            }
+
+            InputStream inputStream = client.downloadSingleFile(vsts.get(0).getWjlj());
+//            response.setContentType("application/octet-stream");
+
+            response.setHeader("Last-Modified", new Date().toString());
+            response.setHeader("Accept-Ranges", "bytes");
+//            String wjmc = URLEncoder.encode(vsts.get(0).getFilename(), "UTF-8");
+//            response.setHeader("Content-disposition","attachment;filename=\""+wjmc+"\"");
             IOUtils.copy(inputStream,response.getOutputStream());
             response.flushBuffer();
         } catch (Exception e) {
