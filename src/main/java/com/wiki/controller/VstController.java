@@ -139,14 +139,14 @@ public class VstController {
             MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
             List<MultipartFile> fileMap = multipartRequest.getFiles("file");
             Vst req = getParms(request, Vst.class);
-            req.setBattchid(snowFlake.nextId()+"");
             if(fileMap != null && fileMap.size() > 0){
 
                 VSFSClient client = getClient();
                 String retJson = client.uploadSingleStreamFile(FJXX_PATH, new StreamFile(fileMap.get(0).getOriginalFilename(), fileMap.get(0).getInputStream()));
                 JSONObject jsonObject = JSONObject.parseObject(retJson);
                 if (!jsonObject.get("result").toString().equals("success")) {
-                    throw new RuntimeException("附件上传服务器失败！");
+                    throw new RuntimeException("附件上传服务器失败！"+"原因："+jsonObject.get("reason").toString());
+//                    return R.error("message").put("message",jsonObject.get("reason").toString());
                 }
                 req.setId(snowFlake.nextId()+"");
                 req.setWjlj(jsonObject.get("filePath").toString());
@@ -325,6 +325,44 @@ public class VstController {
 //            VSTLogger.localLog("===========下载附件出错===============参数:"+paramMap);
 //            e.printStackTrace();
 //        }
+    }
+
+
+    /**
+     * 下载附件
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/fjxxDownloadVideo", method = RequestMethod.GET)
+    public void fjxxDownloadVideo(HttpServletRequest request, HttpServletResponse response) {
+        LOG.info("=====进入下载播放音频======");
+        VSFSClient client = getClient();
+        QueryWrapper<Vst> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByDesc("sysdate");
+        queryWrapper.isNotNull("sysdate");
+        queryWrapper.eq("flagtype","2");
+        List<Vst> vsts = vstMapper.selectList(queryWrapper);
+        try {
+
+            InputStream inputStream = client.downloadSingleFile(vsts.get(0).getWjlj());
+//            response.setContentType("application/octet-stream");
+//            response.setContentType("audio/mp4");
+            response.setHeader("Last-Modified", new Date().toString());
+            response.setHeader("Accept-Ranges", "bytes");
+            response.setContentType("video/mp4");
+            response.addHeader("Content-Type","video/mp4;charset=UTF-8");
+
+//            response.setContentType("audio/mpeg");
+//            response.addHeader("Content-Type","audio/mpeg;charset=UTF-8");
+
+//            response.setHeader("Content-disposition","attachment;filename=\""+vst.getWjlj()+"\"");
+            IOUtils.copy(inputStream,response.getOutputStream());
+            response.flushBuffer();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     public static <T> T getParms(HttpServletRequest request, Class<T> parmClass) {
