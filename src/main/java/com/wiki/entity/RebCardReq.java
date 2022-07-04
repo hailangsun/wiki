@@ -4,10 +4,11 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 @Data
-@TableName("reb_card")
-public class RebCard {
+public class RebCardReq {
 
     private Integer id;
+    private Integer page;
+    private Integer pageSize;
     private String author;
     private String browseCount;
     private String mode;
